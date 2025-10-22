@@ -134,10 +134,10 @@ exports.createDocument = async (req, res) => {
         // Verificar si hay archivo
         let filePath = null;
         if (req.file) {
-            filePath = req.file.path; // Cloudinary devuelve la URL en path
-            console.log('✅ Archivo subido a Cloudinary:', filePath);
-        } else {
-            console.log('⚠️ No se recibió archivo');
+            // Cloudinary devuelve la URL en req.file.path
+            filePath = req.file.path;
+            console.log('📎 Archivo subido a Cloudinary:', filePath);
+            console.log('🔍 Objeto completo req.file:', JSON.stringify(req.file, null, 2));
         }
 
         // Crear documento
