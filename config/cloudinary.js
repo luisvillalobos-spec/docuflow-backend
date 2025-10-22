@@ -14,13 +14,14 @@ cloudinary.config({
 const storage = new CloudinaryStorage({
     cloudinary: cloudinary,
     params: {
-        folder: 'docuflow', // Carpeta en Cloudinary
-        resource_type: 'auto', // Detecta automáticamente el tipo
+        folder: 'docuflow', // Carpeta en Cloudinary donde se guardarán los archivos
+        resource_type: 'auto', // Detecta automáticamente el tipo (image, video, raw)
         allowed_formats: ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx'],
         public_id: (req, file) => {
-            // Nombre único para el archivo
+            // Generar nombre único para el archivo
             const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-            return uniqueSuffix + path.parse(file.originalname).name;
+            const fileName = path.parse(file.originalname).name;
+            return uniqueSuffix + '-' + fileName;
         }
     }
 });
@@ -28,7 +29,7 @@ const storage = new CloudinaryStorage({
 // Configurar Multer con Cloudinary
 const upload = multer({
     storage: storage,
-    limits: { fileSize: 10 * 1024 * 1024 }, // 10MB
+    limits: { fileSize: 10 * 1024 * 1024 }, // 10MB máximo
     fileFilter: function (req, file, cb) {
         const allowedTypes = /pdf|doc|docx|xls|xlsx|ppt|pptx/;
         const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
