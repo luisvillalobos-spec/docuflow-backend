@@ -110,6 +110,10 @@ exports.createDocument = async (req, res) => {
     try {
         const { code, title, description, type } = req.body;
 
+        // LOG 1: Ver qué llega
+        console.log('📝 Crear documento - Body:', req.body);
+        console.log('📎 Archivo recibido:', req.file);
+
         // Validar campos
         if (!code || !title || !type) {
             return res.status(400).json({ 
@@ -128,11 +132,16 @@ exports.createDocument = async (req, res) => {
         }
 
         // Verificar si hay archivo
+        let filePath = null;
         if (req.file) {
-            filePath = req.file.path; // Cloudinary devuelve la URL en req.file.path
+            filePath = req.file.path; // Cloudinary devuelve la URL en path
+            console.log('✅ Archivo subido a Cloudinary:', filePath);
+        } else {
+            console.log('⚠️ No se recibió archivo');
         }
 
         // Crear documento
+        console.log('💾 Guardando en base de datos...');
         const documentId = await Document.create({
             code,
             title,
@@ -143,6 +152,8 @@ exports.createDocument = async (req, res) => {
             file_path: filePath,
             created_by: req.user.id
         });
+
+        console.log('✅ Documento creado con ID:', documentId);
 
         // Registrar en historial
         await DocumentHistory.create({
@@ -161,10 +172,12 @@ exports.createDocument = async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Error al crear documento:', error);
+        console.error('❌ Error al crear documento:', error);
+        console.error('❌ Stack:', error.stack);
         res.status(500).json({ 
             success: false, 
-            message: 'Error en el servidor.' 
+            message: 'Error en el servidor.',
+            error: error.message // Agregar mensaje de error
         });
     }
 };
