@@ -72,7 +72,7 @@ const notifyApprovalRevoked = async (documentId, documentTitle, creatorId, admin
             user_id: creatorId,
             document_id: documentId,
             type: 'aprobacion_revocada',
-            title: '⚠️ Aprobación revocada',
+            title: '⚠️ Aprobacion Revocada',
             message: `La aprobación de tu documento "${documentTitle}" ha sido revocada por ${adminName}. Razón: ${reason}`
         });
         

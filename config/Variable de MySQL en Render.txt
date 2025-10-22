@@ -1,0 +1,11 @@
+Variable de MySQL en Render
+
+MYSQLHOST = mysql.railway.internal
+MYSQLPORT = 3306
+MYSQLUSER = root
+MYSQLPASSWORD = yFSPFJpZLZmvWZljfBPwGQWQnOPnSkuR
+MYSQLDATABASE = railway
+
+Quitado a db
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()

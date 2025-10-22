@@ -60,7 +60,7 @@ exports.getDocumentsByStatus = async (req, res) => {
     try {
         const { status } = req.params;
 
-        const validStatuses = ['Borrador', 'En Revisión', 'Aprobado', 'Rechazado', 'Obsoleto'];
+        const validStatuses = ['Borrador', 'En Revision', 'Aprobado', 'Rechazado', 'Obsoleto'];
         if (!validStatuses.includes(status)) {
             return res.status(400).json({ 
                 success: false, 
@@ -119,7 +119,7 @@ exports.createDocument = async (req, res) => {
         }
 
         // Validar tipo de documento
-        const validTypes = ['Manual', 'Procedimiento', 'Instructivo', 'Política', 'Formato', 'Otro'];
+        const validTypes = ['Manual', 'Procedimiento', 'Instructivo', 'Politica', 'Formato', 'Otro'];
         if (!validTypes.includes(type)) {
             return res.status(400).json({ 
                 success: false, 
@@ -128,9 +128,8 @@ exports.createDocument = async (req, res) => {
         }
 
         // Verificar si hay archivo
-        let filePath = null;
         if (req.file) {
-            filePath = req.file.path;
+            filePath = req.file.path; // Cloudinary devuelve la URL en req.file.path
         }
 
         // Crear documento
@@ -257,7 +256,7 @@ exports.changeDocumentStatus = async (req, res) => {
         const { status, comments } = req.body;
 
         // Validar estado
-        const validStatuses = ['En Revisión', 'Aprobado', 'Rechazado'];
+        const validStatuses = ['En Revision', 'Aprobado', 'Rechazado'];
         if (!validStatuses.includes(status)) {
             return res.status(400).json({ 
                 success: false, 
@@ -275,7 +274,7 @@ exports.changeDocumentStatus = async (req, res) => {
         }
 
         // Validar permisos según el estado
-        if (status === 'En Revisión') {
+        if (status === 'En Revision') {
             // Solo el creador puede enviar a revisión
             if (document.created_by !== req.user.id && req.user.role !== 'Admin') {
                 return res.status(403).json({ 
@@ -305,7 +304,7 @@ exports.changeDocumentStatus = async (req, res) => {
 
         // Registrar en historial
         let action = '';
-        if (status === 'En Revisión') action = 'Enviado a Revisión';
+        if (status === 'En Revision') action = 'Enviado a Revisión';
         else if (status === 'Aprobado') action = 'Aprobado';
         else if (status === 'Rechazado') action = 'Rechazado';
 
@@ -319,7 +318,7 @@ exports.changeDocumentStatus = async (req, res) => {
         });
 
         // Generar notificaciones según el estado
-        if (status === 'En Revisión') {
+        if (status === 'En Revision') {
             await notificationHelper.notifyDocumentSentToReview(id, document.title, document.created_by);
         } else if (status === 'Aprobado') {
             await notificationHelper.notifyDocumentApproved(id, document.title, document.created_by, req.user.full_name || req.user.username);
@@ -524,15 +523,15 @@ exports.downloadDocument = async (req, res) => {
             });
         }
 
-        if (!document.file_path || !fs.existsSync(document.file_path)) {
+        if (!document.file_path) {
             return res.status(404).json({ 
                 success: false, 
                 message: 'Archivo no encontrado.' 
             });
         }
 
-        // Enviar archivo
-        res.download(document.file_path);
+        // Redirigir a la URL de Cloudinary
+        res.redirect(document.file_path);
 
     } catch (error) {
         console.error('Error al descargar documento:', error);
@@ -596,7 +595,7 @@ exports.revokeApproval = async (req, res) => {
         await DocumentHistory.create({
             document_id: id,
             version: document.version,
-            action: 'Aprobación Revocada',
+            action: 'Aprobacion Revocada',
             comments: `Razón: ${reason}`,
             file_path: document.file_path,
             user_id: req.user.id
@@ -607,7 +606,7 @@ exports.revokeApproval = async (req, res) => {
 
         res.json({
             success: true,
-            message: 'Aprobación revocada exitosamente. El documento ha vuelto a estado Borrador.'
+            message: 'Aprobacion Revocada exitosamente. El documento ha vuelto a estado Borrador.'
         });
 
     } catch (error) {
