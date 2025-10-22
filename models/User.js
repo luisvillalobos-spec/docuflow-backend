@@ -57,7 +57,7 @@ class User {
         const { username, email, full_name, role, is_active } = userData;
         
         const [result] = await db.query(
-            'UPDATE users SET username = ?, email = ?, full_name = ?, role = ?, is_active = ? WHERE id = ?',
+            'UPDATE users SET username = ?, email = ?, full_name = ?, role = ?, is_active = ?, updated_at = NOW() WHERE id = ?',
             [username, email, full_name, role, is_active, id]
         );
         
@@ -69,7 +69,7 @@ class User {
         const hashedPassword = await bcrypt.hash(newPassword, 10);
         
         const [result] = await db.query(
-            'UPDATE users SET password = ? WHERE id = ?',
+            'UPDATE users SET password = ?, updated_at = NOW() WHERE id = ?',
             [hashedPassword, id]
         );
         
@@ -79,7 +79,7 @@ class User {
     // Eliminar usuario (soft delete - desactivar)
     static async delete(id) {
         const [result] = await db.query(
-            'UPDATE users SET is_active = FALSE WHERE id = ?',
+            'UPDATE users SET is_active = FALSE, updated_at = NOW() WHERE id = ?',
             [id]
         );
         

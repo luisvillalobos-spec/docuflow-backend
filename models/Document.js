@@ -81,7 +81,7 @@ class Document {
         const { title, description, type, file_path } = documentData;
         
         const [result] = await db.query(
-            'UPDATE documents SET title = ?, description = ?, type = ?, file_path = ? WHERE id = ?',
+            'UPDATE documents SET title = ?, description = ?, type = ?, file_path = ?, updated_at = NOW() WHERE id = ?',
             [title, description, type, file_path, id]
         );
         
@@ -90,7 +90,7 @@ class Document {
 
     // Actualizar estado del documento
     static async updateStatus(id, status, userId, userRole) {
-        let query = 'UPDATE documents SET status = ?';
+        let query = 'UPDATE documents SET status = ?, updated_at = NOW()';
         let params = [status];
         
         // Asignar revisor o aprobador según el rol
@@ -116,7 +116,7 @@ class Document {
     // Actualizar versión del documento
     static async updateVersion(id, newVersion, filePath) {
         const [result] = await db.query(
-            'UPDATE documents SET version = ?, file_path = ? WHERE id = ?',
+            'UPDATE documents SET version = ?, file_path = ?, updated_at = NOW() WHERE id = ?',
             [newVersion, filePath, id]
         );
         
@@ -135,7 +135,7 @@ class Document {
             SELECT 
                 COUNT(*) as total,
                 SUM(CASE WHEN status = 'Borrador' THEN 1 ELSE 0 END) as borradores,
-                SUM(CASE WHEN status = 'En Revisión' THEN 1 ELSE 0 END) as en_revision,
+                SUM(CASE WHEN status = 'En Revision' THEN 1 ELSE 0 END) as en_revision,
                 SUM(CASE WHEN status = 'Aprobado' THEN 1 ELSE 0 END) as aprobados,
                 SUM(CASE WHEN status = 'Rechazado' THEN 1 ELSE 0 END) as rechazados
             FROM documents
