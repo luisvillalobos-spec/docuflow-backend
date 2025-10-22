@@ -12,6 +12,25 @@ const notificationRoutes = require('./routes/notificationRoutes');
 // Crear app de Express
 const app = express();
 
+// ====================================
+// DIAGNÓSTICO DE CLOUDINARY
+// ====================================
+console.log('🔍 Verificando Cloudinary...');
+console.log('Cloud Name:', process.env.CLOUDINARY_CLOUD_NAME ? '✅ Configurado' : '❌ NO configurado');
+console.log('API Key:', process.env.CLOUDINARY_API_KEY ? '✅ Configurado' : '❌ NO configurado');
+console.log('API Secret:', process.env.CLOUDINARY_API_SECRET ? '✅ Configurado' : '❌ NO configurado');
+
+try {
+    const { upload } = require('./config/cloudinary');
+    console.log('✅ Cloudinary cargado correctamente');
+} catch (error) {
+    console.error('❌ Error cargando Cloudinary:', error.message);
+    console.error('Stack completo:', error.stack);
+}
+// ====================================
+// FIN DIAGNÓSTICO
+// ====================================
+
 // Middleware
 app.use(cors());
 app.use(express.json());
@@ -103,6 +122,6 @@ app.listen(PORT, () => {
     console.log('===========================================');
     console.log(`🚀 Servidor corriendo en puerto ${PORT}`);
     console.log(`📍 URL: http://localhost:${PORT}`);
-    console.log(`🌍 Entorno: ${process.env.NODE_ENV || 'development'}`);
+    console.log(`🌐 Entorno: ${process.env.NODE_ENV || 'development'}`);
     console.log('===========================================');
 });
